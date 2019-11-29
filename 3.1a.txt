@@ -1,0 +1,3 @@
+"SELECT photoID FROM Photo AS p WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE
+            "username_follower = "TestUser" and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM
+            "belongto NATURAL JOIN sharedwith WHERE member_username = "TestUser")) OR (photoPoster = "TestUser") ORDER BY postingdate DESC"
