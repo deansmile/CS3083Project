@@ -1,0 +1,48 @@
+<html>
+<head>
+</head>
+
+<body>
+	<h1 style="color:blueviolet">Welcome To Finstagram {{username}}</h1>
+	<a href="/upload_image">Upload Image</a>
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+</br>
+Visible images id:</br>
+	<table>
+{% for image in images %}
+<p>{{image.photoID}}, {{image.postingdate}}, {{image.photoPoster}}</p>
+	
+
+<!-- <table>
+	<tr>
+		<td>{{image.photoID}}</td>
+	</tr>
+	<tr>
+		<td>
+			<td><img src="{{image.filepath}}" width="300px" height = "auto" alt = "me"></td>
+		</td>
+	</tr>
+	<tr>
+		<td>{{image.postingdate}}</td>
+	</tr>
+	<tr>
+		<td>{{image.photoPoster}}</td>
+	</tr> -->
+{% endfor %}
+</table>
+
+<a href="/select_blogger">Select a blogger</a>
+<br>
+<li><a href="/tag">Manage Tag Requests</a></li>
+<br>
+<a href="/logout">Logout</a>
+
+</body>
+
+
+</html>
