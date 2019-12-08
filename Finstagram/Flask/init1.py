@@ -166,9 +166,6 @@ def show_posts():
     cursor.close()
     return render_template('show_posts.html', poster_name=poster, posts=data)
 
-
-
-
 @app.route("/like", methods = ["GET","POST"])
 def likes():
     photoID = request.args.get("photoID")
@@ -193,6 +190,29 @@ def likes():
 
     return render_template("likes.html",likes = data)
 
+@app.route("/comment", methods = ["GET","POST"])
+def comment():
+    photoID = request.args.get("photoID")
+
+    user = session['username']
+
+    comment = request.form['comment']
+
+    cursor = conn.cursor();
+
+    query = "INSERT INTO comment (username, photoID, comment) VALUES (%s, %s,%s)"
+
+    cursor.execute(query,(user, photoID,comment))
+
+    query = "SELECT * FROM comment WHERE photoID = %s"
+
+    cursor.execute(query,photoID)
+
+    data = cursor.fetchall()
+
+    cursor.close()
+
+    return render_template("comment.html",comments = data)
 
 
 @app.route('/logout')
