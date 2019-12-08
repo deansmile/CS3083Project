@@ -4,7 +4,11 @@
 		<title>View Likes</title>
 	</head>
 	<body>
-		<h1>Likes</h1>
+		<h1>&hearts; You've liked a picture!</h1>
+		<form action="/rates" method="POST">
+			<input type="text" name="rating" required/>
+			<input type="submit" value = submit />
+		</form>
 		
 		<table>
 			{% for like in likes %}

@@ -132,7 +132,7 @@ def post():
     data = cursor.fetchall()
 
     cursor.close()
-    
+
     return render_template("home.html", user=user, images=data)
         # username = session['username']
         # cursor = conn.cursor();
@@ -169,15 +169,32 @@ def show_posts():
 
 
 
-@app.route("/like", methods = ["GET"])
+@app.route("/like", methods = ["GET","POST"])
 def likes():
     photoID = request.args.get("photoID")
+
+    user = session['username']
+
+    cursor = conn.cursor();
+
+    query = "INSERT INTO likes (username, photoID) VALUES (%s, %s) "
+
+    cursor.execute(query,(user, photoID))
+
     query = "SELECT * FROM likes NATURAL JOIN user WHERE photoID = %s ORDER BY liketime DESC"
-    with conn.cursor() as cursor:
-        cursor.execute(query, photoID)
+
+    cursor.execute(query,photoID)
+
     data = cursor.fetchall()
-    return render_template("likes.html", likes = data)
-        
+
+    cursor.close()
+
+    return render_template("likes.html",likes = data)
+
+@app.route("/rates", methods = ["GET"])
+def rates():
+    return render_template("likes.html")
+
 
 @app.route('/logout')
 def logout():
