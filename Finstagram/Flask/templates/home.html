@@ -16,6 +16,7 @@ Visible images id:</br>
 	<table>
 {% for image in images %}
 <p>{{image.photoID}}, {{image.photoPoster}}, {{image.postingdate}}</p>
+<p><img src={{image.filepath}} alt="postPicture" width="20%" height="auto"></p>
 	
 
 <!-- <table>

@@ -7,10 +7,13 @@
             <div class="col">
                 <h1>Upload an Image!</h1>
                 <hr>
-                <form action="/post" method="POST" enctype="multipart/form-data">
-                    <input type="file" name="image" id= "image" accept="image/*">
+                <form action="/post" method="POST">
+                    <p>Submit the link to image: </p>
+                    <input type="text" name="imageLink" id= "image" required/>
+                    <p>Name of the post: </p>>
+                    <input type="text" name="imageName" id= "image" required/>
                     <br/>
-                    <button type = "submit" formaction="post">post</button>
+                    <input type="submit" value = Post />
                 </form>
             </div>
         </div>

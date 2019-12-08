@@ -98,8 +98,6 @@ def home():
             "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
     cursor.execute(query, (user,user,user))
     data = cursor.fetchall()
-
-
     cursor.close()
     return render_template("home.html", user=user, images=data)
 
@@ -110,29 +108,32 @@ def upload_image():
 
 @app.route('/post', methods=['GET', 'POST'])
 def post():
-    if request.method == "POST":      
-        if request.files:
-            username = session['username']
 
-            cursor = conn.cursor();
+    user = session['username']
 
-            image_file = request.files['image']
+    cursor = conn.cursor();
 
-            image_name = image_file.filename
+    image_file = request.form['imageLink']
 
-            filepath = os.path.join(app.config["IMAGE_UPLOADS"], image_name)
+    image_name = request.form['imageName']
 
-            image_file.save(os.path.join(app.config['IMAGE_UPLOADS'],image_name))
+    query = "INSERT INTO photo (photoID, filePath,photoPoster) VALUES (%s, %s, %s)"
 
-            query = "INSERT INTO photo (photoID, filePath,photoPoster) VALUES (%s, %s, %s)"
+    cursor.execute(query, (image_name, image_file, user))
 
-            cursor.execute(query, (image_name, filepath, username ))
+    conn.commit()
+    
+    query = "SELECT * FROM Photo WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
+            "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
+            "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
 
-            conn.commit()
-            
-            conn.close()
+    cursor.execute(query, (user,user,user))
 
-    return redirect('home.html')
+    data = cursor.fetchall()
+
+    cursor.close()
+    
+    return render_template("home.html", user=user, images=data)
         # username = session['username']
         # cursor = conn.cursor();
         # blog = request.form['blog']
