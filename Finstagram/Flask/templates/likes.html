@@ -5,17 +5,14 @@
 	</head>
 	<body>
 		<h1>&hearts; You've liked a picture!</h1>
-		<form action="/rates" method="POST">
-			<input type="text" name="rating" required/>
-			<input type="submit" value = submit />
-		</form>
-		
 		<table>
+			<tr>
+				<th>username </th>
+				<th>rating </th>
 			{% for like in likes %}
 			<tr>
-				<td>
-					{{like.first_name}} {{like.last_name}}
-				</td>
+				<td>{{like.username}} </td>
+				<td>{{like.rating}}</td>
 			</tr>
 			{% endfor %}
 		</table>

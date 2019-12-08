@@ -93,7 +93,7 @@ def registerAuth():
 def home():
     user = session['username']
     cursor = conn.cursor();
-    query = "SELECT * FROM Photo WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
+    query = "SELECT * FROM Photo NATURAL JOIN user WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
             "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
             "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
     cursor.execute(query, (user,user,user))
@@ -175,11 +175,13 @@ def likes():
 
     user = session['username']
 
+    rating = request.form['rating']
+
     cursor = conn.cursor();
 
-    query = "INSERT INTO likes (username, photoID) VALUES (%s, %s) "
+    query = "INSERT INTO likes (username, photoID,rating) VALUES (%s, %s,%s) "
 
-    cursor.execute(query,(user, photoID))
+    cursor.execute(query,(user, photoID,rating))
 
     query = "SELECT * FROM likes NATURAL JOIN user WHERE photoID = %s ORDER BY liketime DESC"
 
@@ -191,9 +193,6 @@ def likes():
 
     return render_template("likes.html",likes = data)
 
-@app.route("/rates", methods = ["GET"])
-def rates():
-    return render_template("likes.html")
 
 
 @app.route('/logout')
