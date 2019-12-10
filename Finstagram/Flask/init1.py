@@ -94,7 +94,7 @@ def registerAuth():
 def home():
     user = session['username']
     cursor = conn.cursor();
-    query = "SELECT * FROM Photo NATURAL JOIN user WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
+    query = "SELECT * FROM Photo JOIN user ON Photo.photoPoster=user.username WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
             "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
             "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
     cursor.execute(query, (user,user,user))
@@ -107,7 +107,7 @@ def upload_image():
     return render_template("upload.html")
 
 app.secret_key = "super secret key"
-app.config["IMAGES_DIR"] = "C:\Users\giana\Documents\CS3083Project\Finstagram\Flask\static"
+app.config["IMAGES_DIR"] = "D:\github\CS3083Project\Finstagram\Flask\static"
 ALLOWED_EXTENSIONS = {'png','jpg','jpeg','gif'}
 
 # def allowed_file(filename):
