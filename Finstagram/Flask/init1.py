@@ -94,6 +94,7 @@ def registerAuth():
 def home():
     user = session['username']
     cursor = conn.cursor();
+    query = "SELECT * FROM Photo WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
             "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
             "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
     cursor.execute(query, (user,user,user))
@@ -139,6 +140,7 @@ def post():
 
         conn.commit()
     
+        query = "SELECT * FROM Photo user WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
             "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
             "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
 
