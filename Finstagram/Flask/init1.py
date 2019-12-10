@@ -140,7 +140,7 @@ def post():
 
         conn.commit()
     
-        query = "SELECT * FROM Photo NATURAL JOIN user WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
+        query = "SELECT * FROM Photo JOIN user ON Photo.photoPoster=user.username WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
             "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
             "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
 
