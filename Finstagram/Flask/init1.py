@@ -204,7 +204,7 @@ def comment():
 
     cursor.execute(query,(user, photoID,comment))
 
-    query = "SELECT * FROM comment WHERE photoID = %s"
+    query = "SELECT * FROM comment NATURAL JOIN user WHERE photoID = %s"
 
     cursor.execute(query,photoID)
 
