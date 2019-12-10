@@ -3,7 +3,8 @@ from flask import Flask, render_template, request, session, url_for, redirect
 import pymysql.cursors
 import os
 import time
-from flask.helpers import send_file
+from flask.helpers import flash, send_file
+from werkzeug import secure_filename
 
 
 #Initialize the app from Flask
@@ -105,6 +106,12 @@ def home():
 def upload_image():
     return render_template("upload.html")
 
+app.secret_key = "super secret key"
+app.config["IMAGES_DIR"] = "C:\Users\giana\Documents\CS3083Project\Finstagram\Flask\static"
+ALLOWED_EXTENSIONS = {'png','jpg','jpeg','gif'}
+
+# def allowed_file(filename):
+#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/post', methods=['GET', 'POST'])
 def post():
@@ -113,27 +120,38 @@ def post():
 
     cursor = conn.cursor();
 
-    image_file = request.form['imageLink']
+    if request.method == 'POST':
+        file = request.files['file']
 
-    image_name = request.form['imageName']
+        filename = file.filename
 
-    query = "INSERT INTO photo (photoID, filePath,photoPoster) VALUES (%s, %s, %s)"
+        filepath = os.path.join(app.config["IMAGES_DIR"], filename)
 
-    cursor.execute(query, (image_name, image_file, user))
+        file.save(filepath)
 
-    conn.commit()
+        if request.form:
+            requestData = request.form
+
+            allFollowers = requestData["public"]
+
+        query = "INSERT INTO photo (photoID, filePath,photoPoster, allFollowers) VALUES (%s, %s, %s,%s)"
+
+        cursor.execute(query, (filename, filepath, user,allFollowers))
+
+        conn.commit()
     
-    query = "SELECT * FROM Photo WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
+        query = "SELECT * FROM Photo NATURAL JOIN user WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
             "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
             "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
 
-    cursor.execute(query, (user,user,user))
+        cursor.execute(query, (user,user,user))
 
-    data = cursor.fetchall()
+        data = cursor.fetchall()
 
-    cursor.close()
-
+        cursor.close()
+        
     return render_template("home.html", user=user, images=data)
+
         # username = session['username']
         # cursor = conn.cursor();
         # blog = request.form['blog']

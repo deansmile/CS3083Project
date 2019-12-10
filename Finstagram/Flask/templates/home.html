@@ -12,19 +12,29 @@
 	}
 </style>
 </br>
-Visible images id:</br>
+<table>
+	<tr>
+			<th> photoID </th>
+			<th>firstName </th>
+			<th>lastName </th>
+			<th>postingdate</th>
+	</tr>
+</table>
 	<table>
-{% for image in images %}
-<p>{{image.photoID}}, {{image.firstName}},{{image.lastName}},{{image.postingdate}}</p>
-<p><img src={{image.filepath}} alt="postPicture" width="20%" height="auto"></p>
-<form action="/like?photoID={{image.photoID}}" method="POST">
-	<p>Enter your rating: </p><input type="number" name="rating" required/>
-	<input type="submit" value = &hearts; Like/>
-</form>
-<form action="/comment?photoID={{image.photoID}}" method="POST">
-	<p><input type="text" name="comment" required/>
-	<input type="submit" value = comment></p>
-</form>
+			<tr>	
+				{% for image in images %}
+				<p>{{image.photoID}}, {{image.firstName}},{{image.lastName}},{{image.postingdate}}</p>
+
+				<p><img src="../static/{{image.photoID}}" alt="postPicture" width="20%"></p>
+
+				<form action="/like?photoID={{image.photoID}}" method="POST">
+					<p>Enter your rating: </p><input type="number" name="rating" required/>
+					<input type="submit" value = &hearts; Like/>
+				</form>
+				<form action="/comment?photoID={{image.photoID}}" method="POST">
+					<p><input type="text" name="comment" required/>
+					<input type="submit" value = comment></p>
+				</form>
 
 
 
@@ -41,8 +51,8 @@ Visible images id:</br>
 		<td>{{image.postingdate}}</td>
 	</tr>
 	<tr>
-		<td>{{image.photoPoster}}</td>
-	</tr> -->
+		<td>{{image.photoPoster}}</td> -->
+	</tr>
 {% endfor %}
 </table>
 

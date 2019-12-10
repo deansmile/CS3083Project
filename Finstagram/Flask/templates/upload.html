@@ -7,11 +7,13 @@
             <div class="col">
                 <h1>Upload an Image!</h1>
                 <hr>
-                <form action="/post" method="POST">
-                    <p>Submit the link to image: </p>
+                <form action="/post" method="POST" enctype="multipart/form-data">
+                    <input type ="file" name ="file" accept="image/*"  autocomplete="off" required>
+                    <input type="checkbox" name="public" value="1" checked>visible to all followers?<br/>
+                    <!-- <p>Submit the address on computer to image: </p>
                     <input type="text" name="imageLink" id= "image" required/>
                     <p>Name of the post: </p>>
-                    <input type="text" name="imageName" id= "image" required/>
+                    <input type="text" name="imageName" id= "image" required/> -->
                     <br/>
                     <input type="submit" value = Post />
                 </form>
