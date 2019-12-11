@@ -9,7 +9,7 @@ from werkzeug import secure_filename
 
 #Initialize the app from Flask
 app = Flask(__name__)
-app.config['IMAGE_UPLOADS'] = "D:\study\cs3083\project\Finstagram(1)\Finstagram\Flask\uploads"
+app.config['IMAGE_UPLOADS'] = r"D:\study\cs3083\project\Finstagram(1)\Finstagram\Flask\uploads"
 #Configure MySQL
 conn = pymysql.connect(host='localhost',
                        port = 3306,
@@ -118,7 +118,7 @@ def post():
 
     user = session['username']
 
-    cursor = conn.cursor();
+    cursor = conn.cursor()
 
     if request.method == 'POST':
         file = request.files['file']
@@ -160,6 +160,24 @@ def post():
         # conn.commit()
         # cursor.close()
         # return redirect(url_for('home'))
+
+@app.route('/search_by_tag', methods=['GET', 'POST'])
+def search_by_tag():
+    user = session['username']
+    cursor = conn.cursor()
+    if request.method=='POST':
+        keyword=request.form['keyword']
+        sql="SELECT * FROM Photo NATURAL JOIN tagged WHERE tagstatus=true AND username=%s AND " \
+            "ID IN (SELECT * FROM Photo JOIN user ON Photo.photoPoster=user.username " \
+            "WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
+            "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
+            "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) " \
+            "ORDER BY postingdate DESC "
+        cursor.execute(sql, (keyword, user, user, user))
+        data=cursor.fetchall()
+        return render_template('search_tag_result.html', user=user, images=data)
+    return render_template('home.html')
+
 
 @app.route('/select_blogger')
 def select_blogger():

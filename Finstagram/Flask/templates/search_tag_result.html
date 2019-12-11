@@ -1,17 +1,11 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>SearchTagResult</title>
 </head>
-
 <body>
-	<h1 style="color:blueviolet">Welcome To Finstagram {{username}}  &#127752;</h1>
-	<a href="/upload_image">Upload Image</a>
-	<h2 style="color:blueviolet">Search By Tag </h2>
-	<form method="POST" action="/search_by_tag">
-		<input type="search" name="keyword"><br>
-		<input type="submit" value="search">
-	</form>
-
-<style type="text/css">
+    <style type="text/css">
 	table, th, td{
 		border: 1px solid black;
 	}
@@ -26,7 +20,7 @@
 	</tr>
 </table>
 	<table>
-			<tr>	
+			<tr>
 				{% for image in images %}
 				<p>{{image.photoID}}, {{image.firstName}},{{image.lastName}},{{image.postingdate}}</p>
 
@@ -48,12 +42,5 @@
 	</tr>
 {% endfor %}
 </table>
-
-<a href="/select_blogger">Select a blogger</a>
-<br>
-<a href="/logout">Logout</a>
-
 </body>
-
-
 </html>
