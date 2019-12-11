@@ -9,7 +9,7 @@ from werkzeug import secure_filename
 
 #Initialize the app from Flask
 app = Flask(__name__)
-app.config['IMAGE_UPLOADS'] = r"D:\study\cs3083\project\Finstagram(1)\Finstagram\Flask\uploads"
+app.config['IMAGE_UPLOADS'] = "D:\study\cs3083\project\Finstagram(1)\Finstagram\Flask\uploads"
 #Configure MySQL
 conn = pymysql.connect(host='localhost',
                        port = 3306,
@@ -231,6 +231,41 @@ def comment():
     cursor.close()
 
     return render_template("comment.html",comments = data)
+
+
+@app.route("/tag", methods = ["GET","POST"])
+def tag():
+    photoID = request.args.get("photoID")
+    query = "SELECT * FROM tagged NATURAL JOIN user WHERE tagged.photoID = %s AND tagged.tagstatus = 1"
+    cursor = conn.cursor();
+    cursor.execute(query, photoID)
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template("tag.html", tagPage = data)
+
+@app.route("/tagged",methods = ["GET","POST"])
+def tagged():
+    photoID = request.args.get("photoID")
+    taggee = request.form['taggee']
+    cursor = conn.cursor();
+    if session["username"] == taggee :
+            query = "INSERT INTO Tagged (username, photoID, tagstatus) VALUES (%s, %s, %s)"
+            cursor.execute(query, (session["username"], photoID, 1))
+    else:
+        query = "SELECT * FROM Photo JOIN user ON Photo.photoPoster=user.username WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
+            "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
+            "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
+        cursor.execute(query, (photoID, taggee, taggee, taggee))
+        data = cursor.fetchall()
+        if data:
+            query = "INSERT INTO tagged (username, photoID, tagstatus) VALUES (%s, %s, %s)"
+            cursor.execute(query, (taggee, photoID, 0))
+        else:
+            return render_template("error.html", message1="Invalid Tag")
+    query = "SELECT * FROM tagged NATURAL JOIN user WHERE tagged.photoID = %s AND tagged.tagstatus = 1"
+    cursor.execute(query, photoID)
+    data = cursor.fetchall()
+    return render_template("tag.html",tagPage = data)
 
 
 @app.route('/logout')
