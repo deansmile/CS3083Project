@@ -329,6 +329,8 @@ def updateTag():
             cursor.execute(query, photoID)
             data = cursor.fetchall() 
             return render_template("tag.html",tagPage = data)
+        else:
+            pass
     else:
         pass
     
