@@ -298,7 +298,9 @@ def tagged():
                 query = "INSERT INTO tagged (username, photoID, tagstatus) VALUES (%s, %s, %s)"
                 cursor.execute(query, (taggee, photoID, 0))
             else:
-                return render_template("error.html", message1="Invalid Tag")
+                return render_template("error.html", message="Invalid Tag")
+    else:
+        return render_template("error.html",message = "This picture does not belong to you!")
     query = "SELECT * FROM tagged NATURAL JOIN user WHERE tagged.photoID = %s AND tagged.tagstatus = 1"
     cursor.execute(query, photoID)
     data = cursor.fetchall() 
