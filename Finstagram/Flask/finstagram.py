@@ -280,21 +280,25 @@ def tagged():
     photoID = request.args.get("photoID")
     taggee = request.form['taggee']
     cursor = conn.cursor();
-    if session["username"] == taggee :
-            query = "INSERT INTO Tagged (username, photoID, tagstatus) VALUES (%s, %s, %s)"
-            cursor.execute(query, (session["username"], photoID, 1))
-    else:
-        query = "SELECT * FROM Photo JOIN user ON Photo.photoPoster=user.username WHERE photoID=%s AND " \
-                "(photoPoster IN (SELECT username_followed FROM Follow WHERE " \
-            "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
-            "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
-        cursor.execute(query, (photoID, taggee, taggee, taggee))
-        data = cursor.fetchall()
-        if data:
-            query = "INSERT INTO tagged (username, photoID, tagstatus) VALUES (%s, %s, %s)"
-            cursor.execute(query, (taggee, photoID, 0))
+    query = "SELECT photoPoster from photo WHERE photoID = %s"
+    cursor.execute(query, (photoID))
+    data = cursor.fetchall()
+    if session['username'] == data[0]['photoPoster']:
+        if session["username"] == taggee:
+                query = "INSERT INTO Tagged (username, photoID, tagstatus) VALUES (%s, %s, %s)"
+                cursor.execute(query, (session["username"], photoID, 1))
         else:
-            return render_template("error.html", message1="Invalid Tag")
+            query = "SELECT * FROM Photo JOIN user ON Photo.photoPoster=user.username WHERE photoID=%s AND " \
+                    "(photoPoster IN (SELECT username_followed FROM Follow WHERE " \
+                "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
+                "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) ORDER BY postingdate DESC"
+            cursor.execute(query, (photoID, taggee, taggee, taggee))
+            data = cursor.fetchall()
+            if data:
+                query = "INSERT INTO tagged (username, photoID, tagstatus) VALUES (%s, %s, %s)"
+                cursor.execute(query, (taggee, photoID, 0))
+            else:
+                return render_template("error.html", message1="Invalid Tag")
     query = "SELECT * FROM tagged NATURAL JOIN user WHERE tagged.photoID = %s AND tagged.tagstatus = 1"
     cursor.execute(query, photoID)
     data = cursor.fetchall() 
