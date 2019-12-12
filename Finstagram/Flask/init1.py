@@ -168,16 +168,30 @@ def search_by_tag():
     if request.method=='POST':
         keyword=request.form['keyword']
         sql="SELECT * FROM Photo NATURAL JOIN tagged WHERE tagstatus=true AND username=%s AND " \
-            "ID IN (SELECT * FROM Photo JOIN user ON Photo.photoPoster=user.username " \
+            "photoID IN (SELECT photoID FROM Photo JOIN user ON Photo.photoPoster=user.username " \
             "WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
             "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
-            "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s) " \
-            "ORDER BY postingdate DESC "
+            "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s)) "
         cursor.execute(sql, (keyword, user, user, user))
         data=cursor.fetchall()
-        return render_template('search_tag_result.html', user=user, images=data)
+        return render_template('search_result.html', user=user, images=data)
     return render_template('home.html')
 
+@app.route('/search_by_poster', methods=['GET', 'POST'])
+def search_by_poster():
+    user = session['username']
+    cursor = conn.cursor()
+    if request.method=='POST':
+        keyword=request.form['keyword']
+        sql="SELECT * FROM Photo WHERE photoPoster=%s AND " \
+            "photoID IN (SELECT photoID FROM Photo JOIN user ON Photo.photoPoster=user.username " \
+            "WHERE (photoPoster IN (SELECT username_followed FROM Follow WHERE " \
+            "username_follower = %s and followstatus = 1) and allFollowers = 1) OR (photoID IN (SELECT photoID FROM " \
+            "belongto NATURAL JOIN sharedwith WHERE member_username = %s)) OR (photoPoster = %s)) "
+        cursor.execute(sql, (keyword, user, user, user))
+        data=cursor.fetchall()
+        return render_template('search_result.html', user=user, images=data)
+    return render_template('home.html')
 
 @app.route('/select_blogger')
 def select_blogger():
