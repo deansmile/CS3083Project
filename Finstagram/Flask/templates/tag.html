@@ -3,21 +3,20 @@
 	<body>
 		<h1>Tag a Friend! &#127877; </h1>
 		<div>
-            {% for tag in tagPage %}
-            <p><img src="../static/{{tag.photoID}}" alt="postPicture" width="20%"></p>
-            {% endfor %}
             <h3>People tagged in this picture:</h3>
+            {% for tag in tagPage %}
             <table>
             <tr>
                 <th>firstName </th>
                 <th>lastName</th>
-                {% for tag in tagPage %}    
             <tr>
                 <td>{{tag.firstName}} </td>
                 <td>{{tag.lastName}}</td>
             </tr>
             </table>
-                {% endfor %}            
+            {% endfor %}   
+                
+
 		</div>
 		<a href="/home">Go back</a>
 	</body>

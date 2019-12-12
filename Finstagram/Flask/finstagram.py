@@ -296,9 +296,35 @@ def tagged():
             return render_template("error.html", message1="Invalid Tag")
     query = "SELECT * FROM tagged NATURAL JOIN user WHERE tagged.photoID = %s AND tagged.tagstatus = 1"
     cursor.execute(query, photoID)
-    data = cursor.fetchall()
+    data = cursor.fetchall() 
     return render_template("tag.html",tagPage = data)
 
+@app.route("/tagRequest",methods = ["GET","POST"])
+def tagRequest():
+    user = session['username']
+    query = "SELECT * FROM tagged NATURAL JOIN user WHERE username = %s AND tagged.tagstatus = 0"
+    cursor = conn.cursor();
+    cursor.execute(query, user)
+    data = cursor.fetchall()
+    return render_template("tagRequest.html",tagRequest = data)
+
+@app.route("/updateTag",methods = ["GET","POST"])
+def updateTag():
+    user = session['username']
+    photoID = request.args.get("photoID")
+    if request.form['options']:
+        option = request.form['options']
+        if option == '1':
+            query = "UPDATE tagged SET tagstatus = %s WHERE username = %s AND photoID = %s"
+            cursor = conn.cursor();
+            cursor.execute(query, (option,user,photoID))
+            query = "SELECT * FROM tagged NATURAL JOIN user WHERE tagged.photoID = %s AND tagged.tagstatus = 1"
+            cursor.execute(query, photoID)
+            data = cursor.fetchall() 
+            return render_template("tag.html",tagPage = data)
+    else:
+        pass
+    
 
 @app.route('/logout')
 def logout():
